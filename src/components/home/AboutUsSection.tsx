@@ -15,20 +15,36 @@ const aboutContent = [
   "Driven by creativity and a relentless pursuit of excellence, PixelsFlow is your trusted partner in the digital realm."
 ];
 
-const AnimatedTextLine: React.FC<{ text: string, index: number }> = ({ text, index }) => {
+const AnimatedTextWordByWord: React.FC<{ text: string, lineIndex: number }> = ({ text, lineIndex }) => {
+  const words = text.split(' ');
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  // Trigger when the paragraph itself is partially in view
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
-    <motion.p
+    <p
       ref={ref}
       className="text-lg md:text-xl lg:text-2xl text-foreground/90 mb-6 leading-relaxed"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: isInView ? index * 0.2 : 0 }}
+      aria-label={text} // For accessibility
     >
-      {text}
-    </motion.p>
+      {words.map((word, wordIndex) => (
+        <span key={wordIndex} className="inline-block mr-[0.25em] will-change-transform"> {/* Add will-change for performance hint */}
+          <motion.span
+            style={{ display: 'inline-block' }} // Ensures transform applies correctly
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+              // Delay each word: base delay for line + incremental delay for word
+              delay: isInView ? (lineIndex * 0.05) + (wordIndex * 0.03) : 0 
+            }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </p>
   );
 };
 
@@ -62,9 +78,9 @@ export function AboutUsSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           </motion.div>
           
-          <div className="max-h-[70vh] md:max-h-none overflow-y-auto custom-scrollbar pr-2"> 
+          <div className="max-h-[70vh] md:max-h-[500px] lg:max-h-[600px] overflow-y-auto custom-scrollbar pr-2 md:pr-4"> 
             {aboutContent.map((line, index) => (
-              <AnimatedTextLine key={index} text={line} index={index} />
+              <AnimatedTextWordByWord key={index} text={line} lineIndex={index} />
             ))}
           </div>
         </div>
@@ -72,9 +88,3 @@ export function AboutUsSection() {
     </section>
   );
 }
-
-// Add this to globals.css or a style tag if not already present for custom scrollbar
-// .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-// .custom-scrollbar::-webkit-scrollbar-track { background: hsl(var(--muted) / 0.5); border-radius: 0.8rem; }
-// .custom-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 0.8rem; }
-// .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.8); }

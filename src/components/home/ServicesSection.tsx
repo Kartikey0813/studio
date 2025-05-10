@@ -13,7 +13,10 @@ const tileVariants = [
   "md:col-span-2 md:row-span-1", // Wide
   "md:col-span-1 md:row-span-2", // Tall
   "md:col-span-1 md:row-span-1", // Square
-  "md:col-span-2 md:row-span-2", // Large Square
+  // Repeat pattern or add more variations if services.length > 3
+  "md:col-span-1 md:row-span-1", // Square (for service 4)
+  "md:col-span-2 md:row-span-1", // Wide (for service 5)
+  "md:col-span-1 md:row-span-2", // Tall (for service 6) - this might need adjustment if services.length !== 6
 ];
 
 export function ServicesSection() {
@@ -27,11 +30,12 @@ export function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[masonry] gap-6 auto-rows-fr">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-fr md:grid-flow-row-dense">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
-              className={tileVariants[index % tileVariants.length]}
+              // Apply specific tile variant; ensure tileVariants array is long enough or use modulo
+              className={tileVariants[index % tileVariants.length] || "md:col-span-1 md:row-span-1"}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
@@ -62,7 +66,7 @@ export function ServicesSection() {
                     {service.description}
                   </CardDescription>
                   <Button variant="link" asChild className="self-start p-0 text-primary group-hover:text-accent transition-colors">
-                    <Link href={`/services#${service.id}`}>
+                    <Link href={`/services#${service.id}`}> {/* Assuming a services page exists or link to a section */}
                       Learn More <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>

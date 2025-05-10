@@ -26,6 +26,9 @@ interface ContactFormProps {
   showAnimatedGraphic?: boolean;
 }
 
+const MotionInput = motion(Input);
+const MotionTextarea = motion(Textarea);
+
 export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,17 +51,22 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
     reset();
   };
   
-  const inputVariants = {
-    focus: {
-      borderColor: "hsl(var(--primary))",
-      boxShadow: "0 0 0 2px hsl(var(--ring))",
-      transition: { duration: 0.3 }
+  const inputMotionProps = {
+    variants: {
+      focus: {
+        borderColor: "hsl(var(--ring))", // Use ring color for focus border
+        boxShadow: "0 0 0 2px hsl(var(--ring))",
+        transition: { duration: 0.3 }
+      },
+      blur: {
+        borderColor: "hsl(var(--input))", // Use input border color for blur
+        boxShadow: "0 0 0 0px hsl(var(--ring))",
+        transition: { duration: 0.3 }
+      }
     },
-    blur: {
-      borderColor: "hsl(var(--border))",
-      boxShadow: "0 0 0 0px hsl(var(--ring))",
-      transition: { duration: 0.3 }
-    }
+    whileFocus: "focus",
+    initial: "blur",
+    className:"mt-1 bg-input focus:bg-background ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" // Overwrite some default shadcn focus
   };
 
 
@@ -90,62 +98,42 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
       >
         <div>
           <Label htmlFor="name" className="text-foreground/80">Full Name</Label>
-          <motion.custom
-            // @ts-ignore
-            as={Input} 
+          <MotionInput
             id="name" 
             {...register("name")}
-            variants={inputVariants}
-            whileFocus="focus"
-            initial="blur"
-            className="mt-1 bg-input focus:bg-background"
+            {...inputMotionProps}
             aria-invalid={errors.name ? "true" : "false"}
           />
           {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
         </div>
         <div>
           <Label htmlFor="email" className="text-foreground/80">Email Address</Label>
-          <motion.custom
-            // @ts-ignore
-            as={Input}  
+          <MotionInput
             id="email" 
             type="email" 
             {...register("email")} 
-            variants={inputVariants}
-            whileFocus="focus"
-            initial="blur"
-            className="mt-1 bg-input focus:bg-background"
+            {...inputMotionProps}
             aria-invalid={errors.email ? "true" : "false"}
           />
           {errors.email && <p className="text-sm text-destructive mt-1">{errors.email.message}</p>}
         </div>
         <div>
           <Label htmlFor="subject" className="text-foreground/80">Subject</Label>
-          <motion.custom
-            // @ts-ignore
-            as={Input} 
+          <MotionInput
             id="subject" 
             {...register("subject")} 
-            variants={inputVariants}
-            whileFocus="focus"
-            initial="blur"
-            className="mt-1 bg-input focus:bg-background"
+            {...inputMotionProps}
             aria-invalid={errors.subject ? "true" : "false"}
           />
           {errors.subject && <p className="text-sm text-destructive mt-1">{errors.subject.message}</p>}
         </div>
         <div>
           <Label htmlFor="message" className="text-foreground/80">Message</Label>
-          <motion.custom
-            // @ts-ignore
-            as={Textarea} 
+          <MotionTextarea
             id="message" 
             {...register("message")} 
             rows={5} 
-            variants={inputVariants}
-            whileFocus="focus"
-            initial="blur"
-            className="mt-1 bg-input focus:bg-background"
+            {...inputMotionProps}
             aria-invalid={errors.message ? "true" : "false"}
           />
           {errors.message && <p className="text-sm text-destructive mt-1">{errors.message.message}</p>}
@@ -164,7 +152,7 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
           <motion.div 
             className="absolute inset-0 bg-primary-foreground/20"
             initial={{ width: 0 }}
-            whileHover={{ width: "100%"}}
+            whileHover={{ width: "100%"}} // This animation might not work as expected on a Button's child
             transition={{ duration: 0.4, ease: "easeInOut" }}
           />
         </Button>
