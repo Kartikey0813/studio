@@ -175,13 +175,19 @@ body {
 
 /* For Hero Section Text Stroke Effect */
 .text-stroke {
-  -webkit-text-stroke: 1px hsl(var(--foreground)); /* Adjust stroke width and color as needed */
+  -webkit-text-stroke: 1px hsl(var(--foreground)); 
   text-stroke: 1px hsl(var(--foreground));
 }
 .text-stroke-primary {
   -webkit-text-stroke: 1px hsl(var(--primary)); 
   text-stroke: 1px hsl(var(--primary));
 }
+
+.light .text-stroke {
+  -webkit-text-stroke: 1px hsl(var(--primary)); /* Use primary color for stroke in light mode */
+  text-stroke: 1px hsl(var(--primary));
+}
+
 
 /* For scroll-triggered animations */
 .animate-fade-in-up {

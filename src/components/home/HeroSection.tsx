@@ -45,8 +45,8 @@ export function HeroSection() {
         Your browser does not support the video tag.
       </video>
 
-      {/* Dark overlay for better text contrast */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10"></div>
+      {/* Dark overlay for better text contrast - adjusted for light/dark mode */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/30 dark:bg-black/60 z-10"></div>
       
       {/* Animated background shapes */}
       <AnimatedShape className="w-32 h-32 bg-primary/20 top-1/4 left-1/5" delay="0s" />
@@ -63,7 +63,7 @@ export function HeroSection() {
         >
           PixelsFlow
         </h1>
-        <p className="mt-6 text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">
+        <p className="mt-6 text-lg md:text-xl text-foreground/90 dark:text-foreground/80 max-w-2xl mx-auto">
           Weaving pixels into captivating digital experiences. Your vision, our expertise.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
