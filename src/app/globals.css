@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-unbounded), Arial, Helvetica, sans-serif; /* Changed from GeistSans */
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; /* Changed from --font-unbounded */
 }
 
 @layer base {
@@ -233,3 +233,4 @@ body {
       0 0 10px hsla(var(--primary), 0.4);    /* Glow effect using primary color */
   }
 }
+
