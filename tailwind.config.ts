@@ -11,8 +11,8 @@ export default {
   theme: {
   	extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)'],
-        mono: ['var(--font-geist-mono)'],
+        sans: ['var(--font-unbounded)', 'Arial', 'Helvetica', 'sans-serif'], // Changed from GeistSans
+        mono: ['var(--font-geist-mono)'], // Keep GeistMono for mono contexts
       },
   		colors: {
   			background: 'hsl(var(--background))',
@@ -100,4 +100,3 @@ export default {
     require('@tailwindcss/typography'),
   ],
 } satisfies Config;
-

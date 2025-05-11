@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
+import { Unbounded } from 'next/font/google'; // Changed from GeistSans
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
@@ -8,8 +8,12 @@ import { Footer } from '@/components/layout/Footer';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 
-const geistSans = GeistSans;
-const geistMono = GeistMono;
+const unbounded = Unbounded({
+  subsets: ['latin'],
+  variable: '--font-unbounded',
+  display: 'swap',
+});
+const geistMono = GeistMono; // Keep GeistMono for mono font styles
 
 export const metadata: Metadata = {
   title: 'PixelsFlow Portfolio',
@@ -23,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
+      <body className={`${unbounded.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

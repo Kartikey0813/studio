@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef } from 'react';
@@ -27,7 +28,7 @@ const AnimatedParagraph: React.FC<AnimatedParagraphProps> = ({ text, paragraphIn
 
   return (
     <p
-      className="text-xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-8 md:mb-10 lg:mb-12 leading-relaxed text-center [text-shadow:1px_1px_5px_hsla(var(--primary)/0.6),_0_0_10px_hsla(var(--accent)/0.3)]"
+      className="text-xl md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-10 lg:mb-12 leading-relaxed text-center about-us-text-effect"
       aria-label={text}
     >
       {words.map((word, wordIndex) => {

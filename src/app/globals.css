@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-unbounded), Arial, Helvetica, sans-serif; /* Changed from GeistSans */
 }
 
 @layer base {
@@ -221,3 +221,15 @@ body {
   z-index: 100; /* Higher than navbar if needed */
 }
 
+@layer utilities {
+  .about-us-text-effect {
+    color: transparent; /* Makes the inside of the text blank */
+    -webkit-text-stroke-width: 1px; /* Width of the text border */
+    -webkit-text-stroke-color: hsl(var(--primary)); /* Color of the text border - brand primary */
+    text-stroke-width: 1px;
+    text-stroke-color: hsl(var(--primary));
+    text-shadow:
+      1px 1px 5px hsla(var(--primary), 0.6), /* Directional shadow using primary color */
+      0 0 10px hsla(var(--primary), 0.4);    /* Glow effect using primary color */
+  }
+}
