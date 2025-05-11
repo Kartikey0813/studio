@@ -1,8 +1,6 @@
-
-"use client";
+'use client';
 
 import React, { useRef } from 'react';
-import Image from 'next/image';
 import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 
 const aboutContent = [
@@ -29,26 +27,21 @@ const AnimatedParagraph: React.FC<AnimatedParagraphProps> = ({ text, paragraphIn
 
   return (
     <p
-      className="text-sm text-foreground/90 mb-2 leading-relaxed" // Reduced font size and margin
+      className="text-xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-8 md:mb-10 lg:mb-12 leading-relaxed text-center [text-shadow:1px_1px_5px_hsla(var(--primary)/0.6),_0_0_10px_hsla(var(--accent)/0.3)]"
       aria-label={text}
     >
       {words.map((word, wordIndex) => {
         const wordRelativeStartFraction = wordIndex / words.length;
-        // Point in scrollYProgress (0-1) where this word should start becoming visible
         const revealPoint = segmentStart + (segmentEnd - segmentStart) * wordRelativeStartFraction;
-
-        // Tune these ranges for sensitivity. Input is scrollYProgress.
-        // Word starts appearing slightly before revealPoint, fully visible at revealPoint, stays visible.
-        // A small window (e.g., 0.002 around revealPoint) for opacity and y transition.
-        const revealWindowHalf = 0.0025; // Adjust for faster/slower word pop-in
-        const opacityInputRange = [revealPoint - revealWindowHalf, revealPoint, revealPoint + (0.01 / totalParagraphs) ]; // Stays visible longer after reveal
+        const revealWindowHalf = 0.0020; // Smaller window for faster reveal per word
+        const opacityInputRange = [revealPoint - revealWindowHalf, revealPoint, revealPoint + (0.005 / totalParagraphs) ]; 
         const yInputRange = [revealPoint - revealWindowHalf, revealPoint];
 
         const opacity = useTransform(scrollYProgress, opacityInputRange, [0, 1, 1]);
-        const y = useTransform(scrollYProgress, yInputRange, [20, 0]);
+        const y = useTransform(scrollYProgress, yInputRange, [25, 0]); // Word comes from slightly further down
 
         return (
-          <span key={wordIndex} className="inline-block mr-[0.25em] will-change-transform">
+          <span key={wordIndex} className="inline-block mr-[0.2em] will-change-transform"> {/* Slightly reduced word margin for larger fonts */}
             <motion.span
               style={{ display: 'inline-block', opacity, y }}
             >
@@ -69,8 +62,8 @@ export function AboutUsSection() {
     offset: ["start start", "end end"] 
   });
 
-  // Adjusted section height for a more contained scroll animation
-  const sectionHeight = "180vh";
+  // Increased section height to accommodate larger text and provide more scroll for animation
+  const sectionHeight = "250vh"; 
 
   return (
     <section 
@@ -79,47 +72,23 @@ export function AboutUsSection() {
       className="relative bg-background" 
       style={{ height: sectionHeight }}
     >
-      {/* This div becomes sticky. top-20 (5rem) is for the fixed navbar. */}
       <div 
         className="sticky top-20 h-[calc(100vh-5rem)] overflow-hidden" 
       >
-        <div className="container h-full flex items-center">
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center w-full">
-            <motion.div 
-              className="relative aspect-square md:aspect-auto md:h-[70vh] rounded-xl overflow-hidden shadow-2xl"
-              style={{
-                // Fade in image during first 5% of the section's total scroll animation
-                opacity: useTransform(scrollYProgress, [0, 0.05], [0, 1]), 
-                x: useTransform(scrollYProgress, [0, 0.05], [-50, 0]), // Slide in image
-              }}
-            >
-              <Image 
-                src="https://picsum.photos/seed/designcollab/800/800" 
-                alt="Design agency team collaborating on a project" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                data-ai-hint="design agency collaboration"
-                priority 
+        <div className="container h-full flex flex-col items-center justify-center"> {/* Vertically centers the text block */}
+          <div className="w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl py-10 md:py-16"> {/* Constrain width for readability, added padding */}
+            {aboutContent.map((line, index) => (
+              <AnimatedParagraph
+                key={index}
+                text={line}
+                paragraphIndex={index}
+                totalParagraphs={aboutContent.length}
+                scrollYProgress={scrollYProgress}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            </motion.div>
-            
-            <div className="pr-2 md:pr-4"> 
-              {aboutContent.map((line, index) => (
-                <AnimatedParagraph
-                  key={index}
-                  text={line}
-                  paragraphIndex={index}
-                  totalParagraphs={aboutContent.length}
-                  scrollYProgress={scrollYProgress}
-                />
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 }
-
