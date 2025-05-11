@@ -72,21 +72,35 @@ export interface BlogPost {
   image: string;
   author: string;
   authorImage?: string;
-  date: string; // ISO string or formatted
+  date: string; // Will store ISO date string
   tags: string[];
 }
 
 const authors = ['Kartikey', 'Kushagra', 'Sejal'];
-const startDate = new Date(2025, 0, 1); // January is month 0
-
 const generateSlug = (title: string) => title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
-export const blogPosts: BlogPost[] = [
-  {
-    id: 'b1',
-    title: 'Mastering Responsive Web Design: A 2025 Guide for Peak Performance',
-    excerpt: 'Unlock the secrets to flawless responsive web design. Learn key principles, modern techniques, and tools to ensure your site looks and performs beautifully on any device in 2025.',
-    content: `
+// Base date set to Jan 1, 2025, 12:00:00 UTC to avoid timezone issues around midnight
+const baseDateTime = new Date(Date.UTC(2025, 0, 1, 12, 0, 0, 0)).getTime();
+
+// Calculate day offsets for each of the 22 posts
+// The first post (b1) is at offset 0. Each subsequent post is 5 days after the previous.
+const dayOffsetsInDays: number[] = [];
+let currentDaysFromBase = 0;
+dayOffsetsInDays.push(currentDaysFromBase); // For b1 (index 0)
+
+for (let i = 1; i < 22; i++) { // For b2 (index 1) through b22 (index 21)
+    currentDaysFromBase += 5;
+    dayOffsetsInDays.push(currentDaysFromBase);
+}
+
+// Helper to get an ISO date string for a post based on its index in the dayOffsetsInDays array
+const getPostDateISOString = (offsetArrayIndex: number): string => {
+    const offsetMilliseconds = dayOffsetsInDays[offsetArrayIndex] * 24 * 60 * 60 * 1000;
+    return new Date(baseDateTime + offsetMilliseconds).toISOString();
+};
+
+const blogPostContents = {
+  b1: `
       <p class="mb-4 text-lg leading-relaxed">Responsive web design (RWD) is no longer a luxury but a necessity in today's multi-device world. As users access content on an ever-increasing variety of screen sizes, from giant monitors to tiny smartwatches, ensuring a seamless experience across all platforms is paramount for user engagement and SEO. This guide dives deep into the core principles and advanced techniques for mastering RWD in 2025.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Core Principles of Responsive Design</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -98,18 +112,7 @@ export const blogPosts: BlogPost[] = [
       <p class="mb-4 text-lg leading-relaxed">Beyond the basics, 2025 brings new considerations for RWD. CSS Grid and Flexbox have matured, offering powerful layout capabilities. Container Queries allow components to adapt to their container's size, not just the viewport. Variable fonts provide unprecedented typographic flexibility. We'll explore how to leverage these tools for truly dynamic and performant designs.</p>
       <p class="mb-4 text-lg leading-relaxed">Performance is also a key aspect of RWD. We'll cover lazy loading images, optimizing assets, and ensuring fast load times on mobile networks. A responsive site that's slow is still a poor experience. Finally, we'll touch on testing strategies to ensure your responsive design works flawlessly across a wide array of devices and browsers.</p>
     `,
-    image: 'https://picsum.photos/seed/blog1/800/500',
-    author: authors[0],
-    authorImage: `https://picsum.photos/seed/author0/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 0)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['Responsive Design', 'Web Development', 'CSS', 'Performance'],
-    slug: generateSlug('Mastering Responsive Web Design: A 2025 Guide for Peak Performance')
-  },
-  {
-    id: 'b2',
-    title: 'AI in UI/UX: Navigating Opportunities and Ethical Challenges',
-    excerpt: 'Artificial Intelligence is revolutionizing UI/UX design. Explore the exciting opportunities for personalized experiences and streamlined workflows, alongside the critical ethical considerations designers must address.',
-    content: `
+  b2: `
       <p class="mb-4 text-lg leading-relaxed">Artificial Intelligence (AI) is rapidly transforming the landscape of User Interface (UI) and User Experience (UX) design. From AI-powered design tools that automate repetitive tasks to algorithms that personalize user journeys in real-time, the potential for innovation is immense. This article explores the dual nature of AI in UI/UX: the vast opportunities it presents and the ethical challenges that demand our attention.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Opportunities Unleashed by AI</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -122,18 +125,7 @@ export const blogPosts: BlogPost[] = [
       <p class="mb-4 text-lg leading-relaxed">With great power comes great responsibility. The integration of AI in UI/UX raises significant ethical questions. Bias in AI algorithms can perpetuate and even amplify societal inequalities. Privacy concerns are paramount when dealing with the vast amounts of user data AI relies on. Furthermore, the potential for manipulative design patterns (dark patterns) powered by AI is a serious concern. Designers must champion transparency, fairness, and user control as AI becomes more embedded in digital experiences.</p>
       <p class="mb-4 text-lg leading-relaxed">Navigating this new terrain requires a proactive and informed approach. Designers must educate themselves on AI capabilities and limitations, advocate for ethical AI practices within their organizations, and prioritize user well-being above all else. The future of UI/UX with AI is bright, but it must be built on a foundation of ethical principles.</p>
     `,
-    image: 'https://picsum.photos/seed/blog2/800/500',
-    author: authors[1],
-    authorImage: `https://picsum.photos/seed/author1/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['AI', 'UI/UX', 'Ethics', 'Design Trends'],
-    slug: generateSlug('AI in UI/UX: Navigating Opportunities and Ethical Challenges')
-  },
-  {
-    id: 'b3',
-    title: 'Headless CMS: The Future of Flexible Content Management Systems',
-    excerpt: 'Discover why Headless CMS architecture is gaining traction. Learn its benefits for developers and marketers, offering unparalleled flexibility, scalability, and performance for modern digital experiences.',
-    content: `
+  b3: `
       <p class="mb-4 text-lg leading-relaxed">The traditional monolithic Content Management System (CMS) is facing a formidable challenger: the Headless CMS. This decoupled architecture separates the content repository (the "body") from the presentation layer (the "head"), offering a new paradigm for managing and delivering content across a multitude of digital channels. This article explores why Headless CMS is increasingly seen as the future of content management.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Advantages of a Headless CMS</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -147,20 +139,7 @@ export const blogPosts: BlogPost[] = [
       <p class="mb-4 text-lg leading-relaxed">While Headless CMS offers many benefits, it's not a one-size-fits-all solution. It typically requires more development effort upfront for the presentation layer. Marketers might find the lack of an integrated WYSIWYG preview challenging, although solutions are emerging. Ideal use cases include large enterprises with multiple digital touchpoints, e-commerce sites prioritizing performance, and organizations looking to future-proof their content strategy.</p>
       <p class="mb-4 text-lg leading-relaxed">As digital ecosystems become more complex, the ability to manage content centrally and deliver it flexibly becomes crucial. Headless CMS empowers businesses to innovate faster, adapt to new technologies, and provide consistent, high-quality experiences across all channels, solidifying its place as a key technology for the future.</p>
     `,
-    image: 'https://picsum.photos/seed/blog3/800/500',
-    author: authors[2],
-    authorImage: `https://picsum.photos/seed/author2/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['Headless CMS', 'Content Management', 'Web Development', 'Technology'],
-    slug: generateSlug('Headless CMS: The Future of Flexible Content Management Systems')
-  },
-  // Add 19 more posts with unique content, following the pattern.
-  // For brevity, I will provide a few more and then indicate the rest would follow the same detailed structure.
-  {
-    id: 'b4',
-    title: 'Sustainable Web Development: Building a Greener Internet for Tomorrow',
-    excerpt: 'The internet has a carbon footprint. Learn how sustainable web development practices, from efficient code to green hosting, can help build a more environmentally friendly digital world.',
-    content: `
+  b4: `
       <p class="mb-4 text-lg leading-relaxed">The digital world, while seemingly ethereal, has a tangible environmental impact. Data centers, network infrastructure, and user devices consume vast amounts of energy. Sustainable web development aims to minimize this ecological footprint by creating websites and applications that are efficient, lightweight, and powered by renewable energy where possible.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Key Pillars of Sustainable Web Development</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -173,18 +152,7 @@ export const blogPosts: BlogPost[] = [
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Why Sustainability Matters in Tech</h3>
       <p class="mb-4 text-lg leading-relaxed">As our reliance on digital technologies grows, so does their environmental toll. Adopting sustainable practices is not just an ethical imperative but also makes business sense. Efficient websites offer better user experiences, improve SEO rankings, and can even reduce operational costs. By consciously choosing sustainable approaches, developers and designers can contribute to a healthier planet and a more responsible tech industry.</p>
     `,
-    image: 'https://picsum.photos/seed/blog4/800/500',
-    author: authors[0],
-    authorImage: `https://picsum.photos/seed/author0/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['Sustainability', 'Green Tech', 'Web Development', 'Ethics'],
-    slug: generateSlug('Sustainable Web Development: Building a Greener Internet for Tomorrow')
-  },
-  {
-    id: 'b5',
-    title: 'Microinteractions: The Secret to Delightful and Engaging User Experiences',
-    excerpt: 'Often overlooked, microinteractions are the small, contained moments that accomplish a single task. Discover how well-designed microinteractions can significantly enhance usability and user delight.',
-    content: `
+  b5: `
       <p class="mb-4 text-lg leading-relaxed">Microinteractions are the subtle design elements that make a big difference in user experience. They are the small, contained product moments that revolve around a single use case—like a button changing color on hover, a subtle animation when an item is added to a cart, or the haptic feedback when you complete an action. While seemingly minor, these details collectively shape how users perceive and interact with a digital product.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">The Four Parts of a Microinteraction</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -196,21 +164,7 @@ export const blogPosts: BlogPost[] = [
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Why Microinteractions Matter</h3>
       <p class="mb-4 text-lg leading-relaxed">Well-crafted microinteractions can communicate status, provide feedback, prevent errors, guide users, and add a touch of personality to an interface. They make digital products feel more intuitive, responsive, and human. By paying attention to these small details, designers can create experiences that are not just functional but also delightful, fostering user loyalty and satisfaction. Poorly designed or missing microinteractions, on the other hand, can lead to confusion, frustration, and a perception of a clunky or unresponsive system.</p>
     `,
-    image: 'https://picsum.photos/seed/blog5/800/500',
-    author: authors[1],
-    authorImage: `https://picsum.photos/seed/author1/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['Microinteractions', 'UI/UX', 'User Experience', 'Design Details'],
-    slug: generateSlug('Microinteractions: The Secret to Delightful and Engaging User Experiences')
-  },
-  // ... (Posts b6 to b22 would follow a similar structure with unique content for each topic)
-  // For brevity, the remaining posts will be placeholders but structured correctly.
-  // In a real scenario, each would have unique content like the examples above.
-  {
-    id: 'b6',
-    title: 'Cybersecurity Best Practices for Modern Web Applications in 2025',
-    excerpt: 'Protect your users and data with essential cybersecurity practices for web apps. Learn about common threats and effective mitigation strategies.',
-    content: `
+  b6: `
       <p class="mb-4 text-lg leading-relaxed">In an increasingly connected world, cybersecurity for web applications is non-negotiable. This post covers essential best practices for 2025.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Key Security Measures</h3>
       <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
@@ -221,20 +175,7 @@ export const blogPosts: BlogPost[] = [
       </ul>
       <p class="mb-4 text-lg leading-relaxed">A proactive approach to security is crucial for maintaining user trust and business continuity.</p>
     `,
-    image: 'https://picsum.photos/seed/blog6/800/500',
-    author: authors[2],
-    authorImage: `https://picsum.photos/seed/author2/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    tags: ['Cybersecurity', 'Web Security', 'Development', 'Best Practices'],
-    slug: generateSlug('Cybersecurity Best Practices for Modern Web Applications in 2025')
-  },
-  // ... Continue for b7 to b22, varying topics, authors, and incrementing dates.
-  // For the purpose of this example, I will add one more detailed post and then summarize the rest as brief.
-  {
-    id: 'b7',
-    title: 'Progressive Web Apps (PWAs) vs. Native Apps: Making the Right Choice',
-    excerpt: 'PWAs offer app-like experiences on the web, while native apps provide deep device integration. Understand the pros and cons to decide which is best for your project.',
-    content: `
+  b7: `
       <p class="mb-4 text-lg leading-relaxed">The debate between Progressive Web Apps (PWAs) and native mobile applications continues to be a hot topic for businesses and developers. Both offer unique advantages and cater to different needs. Making an informed decision requires a clear understanding of their capabilities, limitations, and the specific goals of your project.</p>
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Understanding Progressive Web Apps (PWAs)</h3>
       <p class="mb-4 text-lg leading-relaxed">PWAs are web applications that leverage modern web capabilities to deliver an app-like experience to users. Key features include:</p>
@@ -257,18 +198,112 @@ export const blogPosts: BlogPost[] = [
       <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Which Path to Choose?</h3>
       <p class="mb-4 text-lg leading-relaxed">The choice depends on factors like budget, timeline, target audience, required features, and performance needs. PWAs are often faster and cheaper to develop and maintain, offering broader reach. Native apps excel when demanding performance, extensive device integration, or a premium, platform-tailored experience is critical. Sometimes, a hybrid approach or starting with a PWA and later developing a native app might be the best strategy.</p>
     `,
+};
+
+const placeholderContent = (topic: string) => `
+  <p class="mb-4 text-lg leading-relaxed">This article provides a comprehensive exploration of ${topic.toLowerCase()}. We delve into the fundamental concepts, current best practices, and future trends that are shaping this exciting field. Whether you're a seasoned professional or new to the area, you'll find valuable insights here.</p>
+  <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Key Aspects of ${topic}</h3>
+  <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
+    <li>Understanding core principles and methodologies.</li>
+    <li>Exploring advanced tools and technologies.</li>
+    <li>Analyzing real-world case studies and applications.</li>
+    <li>Discussing future challenges and opportunities.</li>
+  </ul>
+  <p class="mb-4 text-lg leading-relaxed">Our goal is to equip you with the knowledge to effectively navigate and innovate within the realm of ${topic.toLowerCase()}. We'll cover practical tips and strategic considerations to help you achieve success.</p>
+`;
+
+
+export const blogPosts: BlogPost[] = [
+  {
+    id: 'b1',
+    title: 'Mastering Responsive Web Design: A 2025 Guide for Peak Performance',
+    excerpt: 'Unlock the secrets to flawless responsive web design. Learn key principles, modern techniques, and tools to ensure your site looks and performs beautifully on any device in 2025.',
+    content: blogPostContents.b1,
+    image: 'https://picsum.photos/seed/blog1/800/500',
+    author: authors[0],
+    authorImage: `https://picsum.photos/seed/author0/100/100`,
+    date: getPostDateISOString(0),
+    tags: ['Responsive Design', 'Web Development', 'CSS', 'Performance'],
+    slug: generateSlug('Mastering Responsive Web Design: A 2025 Guide for Peak Performance')
+  },
+  {
+    id: 'b2',
+    title: 'AI in UI/UX: Navigating Opportunities and Ethical Challenges',
+    excerpt: 'Artificial Intelligence is revolutionizing UI/UX design. Explore the exciting opportunities for personalized experiences and streamlined workflows, alongside the critical ethical considerations designers must address.',
+    content: blogPostContents.b2,
+    image: 'https://picsum.photos/seed/blog2/800/500',
+    author: authors[1],
+    authorImage: `https://picsum.photos/seed/author1/100/100`,
+    date: getPostDateISOString(1),
+    tags: ['AI', 'UI/UX', 'Ethics', 'Design Trends'],
+    slug: generateSlug('AI in UI/UX: Navigating Opportunities and Ethical Challenges')
+  },
+  {
+    id: 'b3',
+    title: 'Headless CMS: The Future of Flexible Content Management Systems',
+    excerpt: 'Discover why Headless CMS architecture is gaining traction. Learn its benefits for developers and marketers, offering unparalleled flexibility, scalability, and performance for modern digital experiences.',
+    content: blogPostContents.b3,
+    image: 'https://picsum.photos/seed/blog3/800/500',
+    author: authors[2],
+    authorImage: `https://picsum.photos/seed/author2/100/100`,
+    date: getPostDateISOString(2),
+    tags: ['Headless CMS', 'Content Management', 'Web Development', 'Technology'],
+    slug: generateSlug('Headless CMS: The Future of Flexible Content Management Systems')
+  },
+  {
+    id: 'b4',
+    title: 'Sustainable Web Development: Building a Greener Internet for Tomorrow',
+    excerpt: 'The internet has a carbon footprint. Learn how sustainable web development practices, from efficient code to green hosting, can help build a more environmentally friendly digital world.',
+    content: blogPostContents.b4,
+    image: 'https://picsum.photos/seed/blog4/800/500',
+    author: authors[0],
+    authorImage: `https://picsum.photos/seed/author0/100/100`,
+    date: getPostDateISOString(3),
+    tags: ['Sustainability', 'Green Tech', 'Web Development', 'Ethics'],
+    slug: generateSlug('Sustainable Web Development: Building a Greener Internet for Tomorrow')
+  },
+  {
+    id: 'b5',
+    title: 'Microinteractions: The Secret to Delightful and Engaging User Experiences',
+    excerpt: 'Often overlooked, microinteractions are the small, contained moments that accomplish a single task. Discover how well-designed microinteractions can significantly enhance usability and user delight.',
+    content: blogPostContents.b5,
+    image: 'https://picsum.photos/seed/blog5/800/500',
+    author: authors[1],
+    authorImage: `https://picsum.photos/seed/author1/100/100`,
+    date: getPostDateISOString(4),
+    tags: ['Microinteractions', 'UI/UX', 'User Experience', 'Design Details'],
+    slug: generateSlug('Microinteractions: The Secret to Delightful and Engaging User Experiences')
+  },
+  {
+    id: 'b6',
+    title: 'Cybersecurity Best Practices for Modern Web Applications in 2025',
+    excerpt: 'Protect your users and data with essential cybersecurity practices for web apps. Learn about common threats and effective mitigation strategies.',
+    content: blogPostContents.b6,
+    image: 'https://picsum.photos/seed/blog6/800/500',
+    author: authors[2],
+    authorImage: `https://picsum.photos/seed/author2/100/100`,
+    date: getPostDateISOString(5),
+    tags: ['Cybersecurity', 'Web Security', 'Development', 'Best Practices'],
+    slug: generateSlug('Cybersecurity Best Practices for Modern Web Applications in 2025')
+  },
+  {
+    id: 'b7',
+    title: 'Progressive Web Apps (PWAs) vs. Native Apps: Making the Right Choice',
+    excerpt: 'PWAs offer app-like experiences on the web, while native apps provide deep device integration. Understand the pros and cons to decide which is best for your project.',
+    content: blogPostContents.b7,
     image: 'https://picsum.photos/seed/blog7/800/500',
     author: authors[0],
     authorImage: `https://picsum.photos/seed/author0/100/100`,
-    date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    date: getPostDateISOString(6),
     tags: ['PWA', 'Native Apps', 'Mobile Development', 'Technology Choice'],
     slug: generateSlug('Progressive Web Apps (PWAs) vs. Native Apps: Making the Right Choice')
   },
-  // Simulating the remaining 15 posts with shorter content for brevity
-  // In a real implementation, these would be as detailed as b1-b7
+  // Dynamically generated posts b8 to b22
   ...Array.from({ length: 15 }, (_, i) => {
-    const postIndex = i + 8; // Start from b8
-    const topics = [
+    const overallPostIndexNumber = i + 8; // Numeric index: 8 for b8, up to 22 for b22
+    const dayOffsetArrayIndex = i + 7;    // Index in dayOffsetsInDays: b8 uses dayOffsetsInDays[7], etc.
+
+    const loopTopics = [
       'Voice User Interface (VUI): Designing for a Voice-First World',
       'The Impact of 5G on Web Performance and User Experience',
       'Data Visualization: Telling Stories with Your Data Effectively',
@@ -285,28 +320,20 @@ export const blogPosts: BlogPost[] = [
       'Dark Mode vs. Light Mode: Designing for User Preference and Eye Strain',
       'The Role of Animation in Modern Web Interfaces: Enhancing UX',
     ];
-    const currentTopic = topics[i % topics.length]; // Cycle through topics if more posts than unique topics
+    const currentTopic = loopTopics[i % loopTopics.length];
+    const postTitle = `${currentTopic} - Advanced Insights ${overallPostIndexNumber}`;
+    
     return {
-      id: `b${postIndex}`,
-      title: `${currentTopic} - Advanced Insights ${postIndex}`,
+      id: `b${overallPostIndexNumber}`,
+      title: postTitle,
       excerpt: `An in-depth look into ${currentTopic.toLowerCase()}, exploring advanced techniques and future prospects for professionals in the field. Essential reading for staying ahead.`,
-      content: `
-        <p class="mb-4 text-lg leading-relaxed">This article provides a comprehensive exploration of ${currentTopic.toLowerCase()}. We delve into the fundamental concepts, current best practices, and future trends that are shaping this exciting field. Whether you're a seasoned professional or new to the area, you'll find valuable insights here.</p>
-        <h3 class="text-2xl font-semibold mt-6 mb-3 text-primary">Key Aspects of ${currentTopic}</h3>
-        <ul class="list-disc list-inside mb-4 space-y-1 text-lg">
-          <li>Understanding core principles and methodologies.</li>
-          <li>Exploring advanced tools and technologies.</li>
-          <li>Analyzing real-world case studies and applications.</li>
-          <li>Discussing future challenges and opportunities.</li>
-        </ul>
-        <p class="mb-4 text-lg leading-relaxed">Our goal is to equip you with the knowledge to effectively navigate and innovate within the realm of ${currentTopic.toLowerCase()}. We'll cover practical tips and strategic considerations to help you achieve success.</p>
-      `,
-      image: `https://picsum.photos/seed/blog${postIndex}/800/500`,
-      author: authors[postIndex % 3],
-      authorImage: `https://picsum.photos/seed/author${postIndex % 3}/100/100`,
-      date: new Date(startDate.setDate(startDate.getDate() + 5)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      tags: [currentTopic.split(':')[0].trim(), 'Technology', 'Innovation', `SEO Boosted ${postIndex}`],
-      slug: generateSlug(`${currentTopic} - Advanced Insights ${postIndex}`)
+      content: placeholderContent(currentTopic),
+      image: `https://picsum.photos/seed/blog${overallPostIndexNumber}/800/500`,
+      author: authors[overallPostIndexNumber % 3],
+      authorImage: `https://picsum.photos/seed/author${overallPostIndexNumber % 3}/100/100`,
+      date: getPostDateISOString(dayOffsetArrayIndex),
+      tags: [currentTopic.split(':')[0].trim(), 'Technology', 'Innovation', `SEO Boosted ${overallPostIndexNumber}`],
+      slug: generateSlug(postTitle)
     };
   })
 ];
@@ -323,7 +350,6 @@ export const footerLinks = {
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Terms of Service', href: '/terms-of-service' },
   ],
+  // Ensure blogPosts is fully defined before footerLinks accesses it.
   recentPosts: blogPosts.slice(0, 3).map(p => ({ label: p.title, href: `/blog/${p.slug}` })),
 };
-
-    

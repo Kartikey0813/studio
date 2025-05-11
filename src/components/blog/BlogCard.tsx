@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CalendarDays, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { FormattedDate } from '@/components/shared/FormattedDate';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -49,7 +50,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           <div className="flex items-center text-xs text-muted-foreground space-x-3">
             <div className="flex items-center">
               <CalendarDays size={14} className="mr-1.5" />
-              <span>{post.date}</span>
+              <FormattedDate isoDateString={post.date} />
             </div>
             <div className="flex items-center">
               <User size={14} className="mr-1.5" />

@@ -6,6 +6,7 @@ import { ArrowLeft, CalendarDays, User, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {notFound} from 'next/navigation';
+import { FormattedDate } from '@/components/shared/FormattedDate';
 
 interface BlogPostPageProps {
   params: {
@@ -71,7 +72,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="flex flex-wrap items-center text-sm text-muted-foreground space-x-4 mb-6">
             <div className="flex items-center">
               <CalendarDays size={16} className="mr-1.5" />
-              <span>{post.date}</span>
+              <FormattedDate isoDateString={post.date} />
             </div>
             <div className="flex items-center">
               <User size={16} className="mr-1.5" />
@@ -111,4 +112,3 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     </div>
   );
 }
-
