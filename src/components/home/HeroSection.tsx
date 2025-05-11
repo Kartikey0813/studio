@@ -1,81 +1,119 @@
 
 "use client";
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { AnimatedHashtags } from './AnimatedHashtags'; // New component for hashtags
 
-// A simple component for animated background shapes
-const AnimatedShape: React.FC<{ className?: string, delay?: string }> = ({ className, delay }) => {
-  return (
-    <div
-      className={`absolute rounded-full animate-pulse ${className}`}
-      style={{ animationDelay: delay, animationDuration: '10s' }}
-    />
-  );
+const headlineText = "Crafting Digital Excellence, Pixel by Pixel.";
+const headlineWords = headlineText.split(" ");
+
+const sentenceVariants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const wordVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 12,
+      stiffness: 100,
+    },
+  },
 };
 
 export function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    // Attempt to ensure video plays on all browsers, especially mobile
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.warn("Video autoplay was prevented:", error);
-        // You might want to show a play button or a static fallback image here
-      });
-    }
-  }, []);
+  const paragraphDelay = headlineWords.length * 0.1 + 0.4; // Delay after headline
+  const buttonsDelay = paragraphDelay + 0.3; // Delay after paragraph
 
   return (
-    <section className="relative h-[calc(100vh-5rem)] min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-background p-4 -mt-20">
-      {/* Animated Shapes for the main background */}
-      <AnimatedShape className="w-32 h-32 bg-primary/10 -z-10 top-1/4 left-1/5" delay="0s" />
-      <AnimatedShape className="w-48 h-48 bg-secondary/10 -z-10 bottom-1/4 right-1/5" delay="2s" />
-      <AnimatedShape className="w-24 h-24 bg-accent/10 -z-10 top-1/3 right-1/3" delay="4s" />
-      <AnimatedShape className="w-40 h-40 bg-primary/5 -z-10 bottom-1/3 left-1/3" delay="6s" />
+    <section className="relative flex flex-col md:flex-row items-center justify-center min-h-[calc(100vh-5rem)] bg-background overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
+      {/* Left Column: Text Content */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left py-8 md:pr-10">
+        <AnimatedHashtags tags={["#Design", "#Development", "#SEO"]} />
 
-      {/* Main visual element: Text with video background */}
-      <div className="relative mb-8 text-center">
-        <h1
-          className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-extrabold uppercase tracking-tighter text-transparent relative z-10 whitespace-nowrap leading-none"
-          style={{
-            WebkitTextStroke: '2px hsl(var(--primary))',
-            textStroke: '2px hsl(var(--primary))',
-          }}
+        <motion.h1
+          className="text-4xl sm:text-5xl lg:text-6xl font-extrabold gradient-text mb-6 leading-tight"
+          variants={sentenceVariants}
+          initial="hidden"
+          animate="visible"
         >
-          PixelsFlow
-        </h1>
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-          poster="https://picsum.photos/seed/videotextbg/1200/300" 
-          data-ai-hint="abstract colorful fluid"
-          src="https://firebasestorage.googleapis.com/v0/b/gh RENDER URL.appspot.com/o/Y2meta.шава_-_DMT_(tribal_trap_edit)-vlc-record-2024-01-01-16h25m15s-25571611.mp4?alt=media&token=47225558-70e0-470f-982f-96c02ca40093"
+          {headlineWords.map((word, index) => (
+            <motion.span
+              key={word + '-' + index}
+              variants={wordVariants}
+              className="inline-block mr-2 md:mr-3" // Spacing between words
+            >
+              {word}
+            </motion.span>
+          ))}
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: paragraphDelay }}
+          className="mt-2 mb-8 text-base sm:text-lg text-foreground/80 max-w-md mx-auto md:mx-0"
         >
-          Your browser does not support the video tag.
-        </video>
+          We transform your vision into stunning digital realities. Innovative solutions for impactful results that elevate your brand.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: buttonsDelay }}
+          className="flex flex-col sm:flex-row justify-center md:justify-start items-center gap-4 w-full sm:w-auto"
+        >
+          <Button
+            asChild
+            size="lg"
+            className="w-full sm:w-auto gradient-bg text-primary-foreground shadow-lg transform transition-all duration-200 ease-out hover:shadow-[4px_4px_0px_hsl(var(--primary))] hover:-translate-x-1 hover:-translate-y-1 focus:shadow-[4px_4px_0px_hsl(var(--primary))] focus:-translate-x-1 focus:-translate-y-1 active:translate-x-0 active:translate-y-0 active:shadow-none"
+          >
+            <Link href="/projects">Explore Our Work</Link>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="w-full sm:w-auto border-2 border-primary text-primary transform transition-all duration-200 ease-out hover:bg-primary/10 hover:shadow-[4px_4px_0px_hsl(var(--accent))] hover:-translate-x-1 hover:-translate-y-1 focus:shadow-[4px_4px_0px_hsl(var(--accent))] focus:-translate-x-1 focus:-translate-y-1 active:translate-x-0 active:translate-y-0 active:shadow-none"
+          >
+            <Link href="/contact">Get In Touch</Link>
+          </Button>
+        </motion.div>
       </div>
 
-      {/* Tagline and Buttons */}
-      <div className="relative z-20 text-center">
-        <p className="mt-6 text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto">
-          Weaving pixels into captivating digital experiences. Your vision, our expertise.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <Button asChild size="lg" className="gradient-bg text-primary-foreground shadow-lg hover:opacity-90 transition-opacity duration-300 transform hover:scale-105">
-            <Link href="/projects">Our Work</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary/10 transition-colors duration-300 transform hover:scale-105">
-            <Link href="/contact">Get in Touch</Link>
-          </Button>
-        </div>
+      {/* Right Column: Image */}
+      <div className="w-full md:w-1/2 flex justify-center items-center mt-8 md:mt-0 md:pl-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, x: 50 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1], delay: 0.2 }} // Smooth custom ease
+          className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl aspect-square rounded-xl overflow-hidden shadow-2xl"
+        >
+          <Image
+            src="https://picsum.photos/seed/webdevhero/800/800"
+            alt="Web Development and Design Studio"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 80vw, 40vw"
+            priority
+            data-ai-hint="web development design"
+          />
+           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-70"></div>
+        </motion.div>
       </div>
     </section>
   );
 }
-
