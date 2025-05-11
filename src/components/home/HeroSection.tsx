@@ -28,42 +28,42 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-[calc(100vh-5rem)] min-h-[600px] flex items-center justify-center overflow-hidden p-0 -mt-20">
-      {/* Background Video */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline // Important for iOS
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        poster="https://picsum.photos/seed/videoposter/1920/1080"
-        data-ai-hint="abstract technology"
-      >
-        {/* Provide a real video source */}
-        <source src="https://firebasestorage.googleapis.com/v0/b/gh RENDER URL.appspot.com/o/Y2meta.шава_-_DMT_(tribal_trap_edit)-vlc-record-2024-01-01-16h25m15s-25571611.mp4?alt=media&token=47225558-70e0-470f-982f-96c02ca40093" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <section className="relative h-[calc(100vh-5rem)] min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-background p-4 -mt-20">
+      {/* Animated Shapes for the main background */}
+      <AnimatedShape className="w-32 h-32 bg-primary/10 -z-10 top-1/4 left-1/5" delay="0s" />
+      <AnimatedShape className="w-48 h-48 bg-secondary/10 -z-10 bottom-1/4 right-1/5" delay="2s" />
+      <AnimatedShape className="w-24 h-24 bg-accent/10 -z-10 top-1/3 right-1/3" delay="4s" />
+      <AnimatedShape className="w-40 h-40 bg-primary/5 -z-10 bottom-1/3 left-1/3" delay="6s" />
 
-      {/* Dark overlay for better text contrast - adjusted for light/dark mode */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/30 dark:bg-black/60 z-10"></div>
-      
-      {/* Animated background shapes */}
-      <AnimatedShape className="w-32 h-32 bg-primary/20 top-1/4 left-1/5" delay="0s" />
-      <AnimatedShape className="w-48 h-48 bg-secondary/20 bottom-1/4 right-1/5" delay="2s" />
-      <AnimatedShape className="w-24 h-24 bg-accent/20 top-1/3 right-1/3" delay="4s" />
-      <AnimatedShape className="w-40 h-40 bg-primary/10 bottom-1/3 left-1/3" delay="6s" />
-
-
-      {/* Content */}
-      <div className="relative z-20 text-center container">
+      {/* Main visual element: Text with video background */}
+      <div className="relative mb-8 text-center">
         <h1
-          className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold uppercase tracking-tighter text-transparent text-stroke"
-          aria-label="PixelsFlow"
+          className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold uppercase tracking-tighter text-transparent relative z-10 whitespace-nowrap"
+          style={{
+            WebkitTextStroke: '2px hsl(var(--primary))',
+            textStroke: '2px hsl(var(--primary))',
+          }}
         >
           PixelsFlow
         </h1>
-        <p className="mt-6 text-lg md:text-xl text-foreground/90 dark:text-foreground/80 max-w-2xl mx-auto">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+          poster="https://picsum.photos/seed/videotextbg/1200/300" 
+          data-ai-hint="abstract colorful fluid"
+          src="https://firebasestorage.googleapis.com/v0/b/gh RENDER URL.appspot.com/o/Y2meta.шава_-_DMT_(tribal_trap_edit)-vlc-record-2024-01-01-16h25m15s-25571611.mp4?alt=media&token=47225558-70e0-470f-982f-96c02ca40093"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      {/* Tagline and Buttons */}
+      <div className="relative z-20 text-center">
+        <p className="mt-6 text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto">
           Weaving pixels into captivating digital experiences. Your vision, our expertise.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
