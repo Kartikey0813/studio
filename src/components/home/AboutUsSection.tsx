@@ -29,7 +29,7 @@ const AnimatedParagraph: React.FC<AnimatedParagraphProps> = ({ text, paragraphIn
 
   return (
     <p
-      className="text-lg md:text-xl lg:text-2xl text-foreground/90 mb-6 leading-relaxed"
+      className="text-sm text-foreground/90 mb-2 leading-relaxed" // Reduced font size and margin
       aria-label={text}
     >
       {words.map((word, wordIndex) => {
@@ -69,9 +69,8 @@ export function AboutUsSection() {
     offset: ["start start", "end end"] 
   });
 
-  // Each paragraph gets roughly 60vh of "scroll runway" to animate its words.
-  // Add an additional 100vh for the overall section stickiness buffer (entry/exit).
-  const sectionHeight = `${aboutContent.length * 60 + 100}vh`;
+  // Adjusted section height for a more contained scroll animation
+  const sectionHeight = "180vh";
 
   return (
     <section 
@@ -95,18 +94,17 @@ export function AboutUsSection() {
               }}
             >
               <Image 
-                src="https://picsum.photos/seed/aboutusvision/800/800" 
-                alt="Collaborative team working in a modern office" 
+                src="https://picsum.photos/seed/designcollab/800/800" 
+                alt="Design agency team collaborating on a project" 
                 fill 
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
-                data-ai-hint="teamwork modern office"
-                priority // Consider for LCP if above the fold or critical
+                data-ai-hint="design agency collaboration"
+                priority 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </motion.div>
             
-            {/* Text container: removed max-h, overflow-y-auto, custom-scrollbar */}
             <div className="pr-2 md:pr-4"> 
               {aboutContent.map((line, index) => (
                 <AnimatedParagraph
@@ -124,3 +122,4 @@ export function AboutUsSection() {
     </section>
   );
 }
+
