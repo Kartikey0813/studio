@@ -3,7 +3,7 @@
 
 import React, { useRef } from 'react';
 import Image from 'next/image';
-import { motion, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 
 const aboutContent = [
   "At PixelsFlow, we are more than just a design and development company.",
@@ -15,73 +15,109 @@ const aboutContent = [
   "Driven by creativity and a relentless pursuit of excellence, PixelsFlow is your trusted partner in the digital realm."
 ];
 
-const AnimatedTextWordByWord: React.FC<{ text: string, lineIndex: number }> = ({ text, lineIndex }) => {
+interface AnimatedParagraphProps {
+  text: string;
+  paragraphIndex: number;
+  totalParagraphs: number;
+  scrollYProgress: MotionValue<number>; 
+}
+
+const AnimatedParagraph: React.FC<AnimatedParagraphProps> = ({ text, paragraphIndex, totalParagraphs, scrollYProgress }) => {
   const words = text.split(' ');
-  const ref = useRef(null);
-  // Trigger when the paragraph itself is partially in view
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const segmentStart = paragraphIndex / totalParagraphs;
+  const segmentEnd = (paragraphIndex + 1) / totalParagraphs;
 
   return (
     <p
-      ref={ref}
       className="text-lg md:text-xl lg:text-2xl text-foreground/90 mb-6 leading-relaxed"
-      aria-label={text} // For accessibility
+      aria-label={text}
     >
-      {words.map((word, wordIndex) => (
-        <span key={wordIndex} className="inline-block mr-[0.25em] will-change-transform"> {/* Add will-change for performance hint */}
-          <motion.span
-            style={{ display: 'inline-block' }} // Ensures transform applies correctly
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{
-              duration: 0.5,
-              ease: "easeOut",
-              // Delay each word: base delay for line + incremental delay for word
-              delay: isInView ? (lineIndex * 0.05) + (wordIndex * 0.03) : 0 
-            }}
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
+      {words.map((word, wordIndex) => {
+        const wordRelativeStartFraction = wordIndex / words.length;
+        // Point in scrollYProgress (0-1) where this word should start becoming visible
+        const revealPoint = segmentStart + (segmentEnd - segmentStart) * wordRelativeStartFraction;
+
+        // Tune these ranges for sensitivity. Input is scrollYProgress.
+        // Word starts appearing slightly before revealPoint, fully visible at revealPoint, stays visible.
+        // A small window (e.g., 0.002 around revealPoint) for opacity and y transition.
+        const revealWindowHalf = 0.0025; // Adjust for faster/slower word pop-in
+        const opacityInputRange = [revealPoint - revealWindowHalf, revealPoint, revealPoint + (0.01 / totalParagraphs) ]; // Stays visible longer after reveal
+        const yInputRange = [revealPoint - revealWindowHalf, revealPoint];
+
+        const opacity = useTransform(scrollYProgress, opacityInputRange, [0, 1, 1]);
+        const y = useTransform(scrollYProgress, yInputRange, [20, 0]);
+
+        return (
+          <span key={wordIndex} className="inline-block mr-[0.25em] will-change-transform">
+            <motion.span
+              style={{ display: 'inline-block', opacity, y }}
+            >
+              {word}
+            </motion.span>
+          </span>
+        );
+      })}
     </p>
   );
 };
 
 export function AboutUsSection() {
-  return (
-    <section id="about-us" className="bg-background">
-      <div className="container">
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">Who We Are</h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover the story, passion, and people behind PixelsFlow.
-          </p>
-        </div>
+  const sectionWrapperRef = useRef<HTMLDivElement>(null);
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <motion.div 
-            className="relative aspect-square md:aspect-auto md:h-full rounded-xl overflow-hidden shadow-2xl"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Image 
-              src="https://picsum.photos/seed/team/800/800" 
-              alt="PixelsFlow Team" 
-              fill 
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              data-ai-hint="team collaboration"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </motion.div>
-          
-          <div className="max-h-[70vh] md:max-h-[500px] lg:max-h-[600px] overflow-y-auto custom-scrollbar pr-2 md:pr-4"> 
-            {aboutContent.map((line, index) => (
-              <AnimatedTextWordByWord key={index} text={line} lineIndex={index} />
-            ))}
+  const { scrollYProgress } = useScroll({
+    target: sectionWrapperRef,
+    offset: ["start start", "end end"] 
+  });
+
+  // Each paragraph gets roughly 60vh of "scroll runway" to animate its words.
+  // Add an additional 100vh for the overall section stickiness buffer (entry/exit).
+  const sectionHeight = `${aboutContent.length * 60 + 100}vh`;
+
+  return (
+    <section 
+      id="about-us" 
+      ref={sectionWrapperRef} 
+      className="relative bg-background" 
+      style={{ height: sectionHeight }}
+    >
+      {/* This div becomes sticky. top-20 (5rem) is for the fixed navbar. */}
+      <div 
+        className="sticky top-20 h-[calc(100vh-5rem)] overflow-hidden" 
+      >
+        <div className="container h-full flex items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center w-full">
+            <motion.div 
+              className="relative aspect-square md:aspect-auto md:h-[70vh] rounded-xl overflow-hidden shadow-2xl"
+              style={{
+                // Fade in image during first 5% of the section's total scroll animation
+                opacity: useTransform(scrollYProgress, [0, 0.05], [0, 1]), 
+                x: useTransform(scrollYProgress, [0, 0.05], [-50, 0]), // Slide in image
+              }}
+            >
+              <Image 
+                src="https://picsum.photos/seed/aboutusvision/800/800" 
+                alt="Collaborative team working in a modern office" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                data-ai-hint="teamwork modern office"
+                priority // Consider for LCP if above the fold or critical
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </motion.div>
+            
+            {/* Text container: removed max-h, overflow-y-auto, custom-scrollbar */}
+            <div className="pr-2 md:pr-4"> 
+              {aboutContent.map((line, index) => (
+                <AnimatedParagraph
+                  key={index}
+                  text={line}
+                  paragraphIndex={index}
+                  totalParagraphs={aboutContent.length}
+                  scrollYProgress={scrollYProgress}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
