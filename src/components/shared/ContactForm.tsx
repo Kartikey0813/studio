@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { submitContactFormAction, type ContactFormValues } from '@/actions/contactActions';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -20,7 +20,7 @@ const contactFormSchema = z.object({
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 });
 
-type ContactFormValues = z.infer<typeof contactFormSchema>;
+// Type ContactFormValues is imported from actions now
 
 interface ContactFormProps {
   showAnimatedGraphic?: boolean;
@@ -39,34 +39,43 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
 
   const onSubmit: SubmitHandler<ContactFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log(data);
+    
+    const result = await submitContactFormAction(data);
+
     setIsSubmitting(false);
-    toast({
-      title: "Message Sent!",
-      description: "Thanks for reaching out. We'll get back to you soon.",
-      variant: "default",
-    });
-    reset();
+
+    if (result.success) {
+      toast({
+        title: "Message Sent!",
+        description: result.message,
+        variant: "default", 
+      });
+      reset();
+    } else {
+      toast({
+        title: "Submission Failed",
+        description: result.message,
+        variant: "destructive",
+      });
+    }
   };
   
   const inputMotionProps = {
     variants: {
       focus: {
-        borderColor: "hsl(var(--ring))", // Use ring color for focus border
+        borderColor: "hsl(var(--ring))", 
         boxShadow: "0 0 0 2px hsl(var(--ring))",
         transition: { duration: 0.3 }
       },
       blur: {
-        borderColor: "hsl(var(--input))", // Use input border color for blur
+        borderColor: "hsl(var(--input))", 
         boxShadow: "0 0 0 0px hsl(var(--ring))",
         transition: { duration: 0.3 }
       }
     },
     whileFocus: "focus",
     initial: "blur",
-    className:"mt-1 bg-input focus:bg-background ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" // Overwrite some default shadcn focus
+    className:"mt-1 bg-input focus:bg-background ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
   };
 
 
@@ -79,8 +88,8 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7 }}
+          data-ai-hint="abstract connection"
         >
-          {/* Placeholder for animated graphic */}
           <Send size={128} className="text-primary-foreground opacity-30 animate-pulse" />
            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-background/20 rounded-full animate-ping delay-1000 duration-3000"></div>
            <div className="absolute -top-10 -right-10 w-32 h-32 bg-background/20 rounded-full animate-ping delay-500 duration-3000"></div>
@@ -152,7 +161,7 @@ export function ContactForm({ showAnimatedGraphic = false }: ContactFormProps) {
           <motion.div 
             className="absolute inset-0 bg-primary-foreground/20"
             initial={{ width: 0 }}
-            whileHover={{ width: "100%"}} // This animation might not work as expected on a Button's child
+            whileHover={{ width: "100%"}} 
             transition={{ duration: 0.4, ease: "easeInOut" }}
           />
         </Button>
