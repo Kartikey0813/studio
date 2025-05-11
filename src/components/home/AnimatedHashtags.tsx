@@ -24,7 +24,7 @@ export function AnimatedHashtags({ tags, interval = 2500, className = "" }: Anim
   if (tags.length === 0) return null;
 
   return (
-    <div className={`h-8 mb-3 flex items-center justify-center md:justify-start ${className}`}> {/* Ensures consistent height and alignment */}
+    <div className={`h-8 mb-3 flex items-center justify-center ${className}`}> {/* Ensures consistent height and alignment, removed md:justify-start */}
       <AnimatePresence mode="wait">
         <motion.span
           key={currentIndex}
