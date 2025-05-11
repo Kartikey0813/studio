@@ -38,7 +38,7 @@ export function HeroSection() {
       {/* Main visual element: Text with video background */}
       <div className="relative mb-8 text-center">
         <h1
-          className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold uppercase tracking-tighter text-transparent relative z-10 whitespace-nowrap"
+          className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-extrabold uppercase tracking-tighter text-transparent relative z-10 whitespace-nowrap leading-none"
           style={{
             WebkitTextStroke: '2px hsl(var(--primary))',
             textStroke: '2px hsl(var(--primary))',
@@ -78,3 +78,4 @@ export function HeroSection() {
     </section>
   );
 }
+
